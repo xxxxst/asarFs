@@ -13,21 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 class AsarCtl {
-	// static class AsarBaseFileItem {
-	// 	public String type = "dir";
-	// 	public String name = "";
-	// }
-	// static class AsarDirItem extends AsarBaseFileItem {
-	// 	public String type = "dir";
-	// 	public AsarFileItem[] arrFile = null;
-	// }
-	// static class AsarFileItem extends AsarBaseFileItem {
-	// 	public int start = 0;
-	// 	public int len = 0;
-	// }
-	// static class AsarLinkItem extends AsarBaseFileItem {
-	// 	public String linkPath = "";
-	// }
 	static class AsarItem {
 		int start = 0;
 		int len = 0;

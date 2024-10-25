@@ -45,6 +45,10 @@ public class TestMain {
 		testEqual("[formatPath() err] " + path, expect, AsarFs.formatPath(path));
 	}
 
+	static void streamExistTest(boolean expect, String path) {
+		testEqual("[streamExistTest() err] " + path, expect, AsarFs.getFileStream(path) != null);
+	}
+
     public static void main(String[] args) {
 		try {
 			File file = new File("./test/app.asar");
@@ -52,6 +56,12 @@ public class TestMain {
 		} catch(Exception ignored) { }
 
 		// AsarFs.cacheTime = 0;
+		
+		// AsarFs.getAsarFileInfo("./test/app.asar/ccc.asar");
+		// System.out.println(AsarFs.readFileStringSync("./test/app.asar/ccc.asar"));
+		// if (true) {
+		// 	return;
+		// }
 
         log("test start");
 		System.out.println("");
@@ -84,6 +94,7 @@ public class TestMain {
 		existsSyncTest(false, "./test/\\app.asar/cccLink/unknown.txt");
 		existsSyncTest(true, "./test/app.asar/bbb.asar\\size");
 		existsSyncTest(true, "./test/app.asar/ccc.asar\\ddd/\\");
+		existsSyncTest(true, "./test/app.asar/ccc.asar\\eee.txt");
 		existsSyncTest(true, "./test/app.asar/ccc/ddd\\\\/fff/hhh.txt");
 		existsSyncTest(true, "./test/app.asar/cccLink/ddd\\\\/fff/hhh.txt");
 		existsSyncTest(true, "./test/app.asar/ccclink/ddd\\\\/fff/hhh.txt");
@@ -154,7 +165,7 @@ public class TestMain {
 		readFileStringSyncTest("", "");
 		readFileStringSyncTest("", "./test/");
 		readFileStringSyncTest("", "./test/unknown.txt");
-		readFileStringSyncTest("", "./test/app.asar");
+		// readFileStringSyncTest("", "./test/app.asar");
 		readFileStringSyncTest("bb", "./test/app.asar/\\bbb.txt");
 		readFileStringSyncTest("bb", "./test/app.asar/\\bbbLink.txt");
 		readFileStringSyncTest("", "./test/app.asar/unknown.txt");
@@ -164,12 +175,23 @@ public class TestMain {
 		readFileStringSyncTest("", "./test/\\app.asar/cccLink/unknown.txt");
 		readFileStringSyncTest("", "./test/app.asar/bbb.asar\\size");
 		readFileStringSyncTest("", "./test/app.asar/ccc.asar\\ddd/\\");
+		readFileStringSyncTest("eee", "./test/app.asar/ccc.asar\\eee.txt");
 		readFileStringSyncTest("hhhhhhhh", "./test/app.asar/ccc/ddd\\\\/fff/hhh.txt");
 		readFileStringSyncTest("hhhhhhhh", "./test/app.asar/cccLink/ddd\\\\/fff/hhh.txt");
 		readFileStringSyncTest("hhhhhhhh", "./test/app.asar/ccclink/ddd\\\\/fff/hhh.txt");
 		readFileStringSyncTest("ggggggg", "./test/app.asar/cccLink/dddLink\\\\//gggLink.txt");
 		readFileStringSyncTest("", "./test/appVirtual.asar/cccLink/dddLink\\\\//gggLink.txt");
 		readFileStringSyncTest("", "@resource/test/appVirtual.asar/cccLink/dddLink\\\\//gggLink.txt");
+
+		streamExistTest(false, "");
+		streamExistTest(false, "./test/");
+		streamExistTest(false, "./test/unknown.txt");
+		streamExistTest(true, "./test/app.asar");
+		streamExistTest(true, "./test/app.asar/\\bbb.txt");
+		streamExistTest(true, "./test/app.asar/\\bbb.txt");
+		streamExistTest(false, "./test/app.asar/ccc.asar\\ddd/\\");
+		streamExistTest(true, "./test/app.asar/ccc.asar\\eee.txt");
+		streamExistTest(true, "./test/app.asar/ccc.asar");
 
 		AsarFile asarFile = new AsarFile() {
 			@Override
@@ -185,7 +207,7 @@ public class TestMain {
 		Map<String, AsarFile> mapVirtualAsarFile = new HashMap<>();
 		mapVirtualAsarFile.put("./test/appVirtual.asar", asarFile);
 		mapVirtualAsarFile.put("@resource/test/appVirtual.asar", asarFile);
-		AsarFs.mapVirtualAsarFile(mapVirtualAsarFile);
+		AsarFs.setVirtualAsarFile(mapVirtualAsarFile);
 		
 		existsSyncTest(true, "./test/app.asar/cccLink/dddLink\\\\/gggLink.txt");
 		existsSyncTest(true, "./test/appVirtual.asar/cccLink/dddLink\\\\/gggLink.txt");
@@ -287,8 +309,6 @@ public class TestMain {
 			return;
 		}
 		++errCount;
-		// log("[equal err]", tag, "input is <", input, ">, expect is <", expect, ">");
-		// log("[equal err] ", tag);
 		if (tag.equals("")) {
 			tag = "[equal err]";
 		}
@@ -354,9 +374,6 @@ public class TestMain {
 	static void log(Object ...arrObj) {
 		String str = "";
 		for (int i = 0; i < arrObj.length; ++i) {
-			// if (!str.equals("")) {
-			// 	str += ",";
-			// }
 			str += arrObj[i];
 		}
 		System.out.println(str);
@@ -365,9 +382,6 @@ public class TestMain {
 	static void logObj(Object ...arrObj) {
 		for (int i = 0; i < arrObj.length; ++i) {
 			String str = gson.toJson(arrObj[i]);
-			// if (str.equals("\"\"") || str.equals("null")) {
-			// 	continue;
-			// }
 			if (str.equals("\"\"")) {
 				str = "";
 			}

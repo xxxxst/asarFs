@@ -24,12 +24,9 @@ public final class AsarFs {
 	static long lastCheckTime = 0;
 
 	static class AsarFileItem {
-		//public AsarCtl ctl = null;
-		//public AsarCtl.AsarFile physicsFile = null;
 		public long visitTime = 0;
 		public String path = "";
 		public AsarCtl ctl = null;
-		//public JSONObject asarObj = null;
 
 		public String physicsPath = "";
 		public int physicsStart = 0;
@@ -41,10 +38,6 @@ public final class AsarFs {
 		public AsarFileItem asarFile = null;
 
 		public String subPath = "";
-		//public JSONObject asarSubObj = null;
-		//public int subFilePhysicsStart = 0;
-		//public long subFilePhysicsLen = 0;
-
 		public AsarFileStatus subFileStatus = null;
 	}
 	
@@ -67,8 +60,6 @@ public final class AsarFs {
 	 * @return format path
 	*/
 	public static String formatPath(String path) {
-		// return path.trim().toLowerCase().replaceAll("[\\\\/]+", "/").replaceAll("[/]+$", "");
-
 		path = path.trim().toLowerCase();
 
 		if (path.equals("")) {
@@ -113,7 +104,6 @@ public final class AsarFs {
 		if (cacheTimeMs <= 0) {
 			return;
 		}
-		// System.out.println("add: " + it.path);
 		it.visitTime = new Date().getTime();
 		mapFileItem.put(it.path, it);
 	}
@@ -128,7 +118,6 @@ public final class AsarFs {
 			AsarFileItem it = ent.getValue();
 			
 			if (time - it.visitTime > cacheTimeMs) {
-				// System.out.println("del:" + path);
 				itr.remove();
 			}
 		}
@@ -149,11 +138,9 @@ public final class AsarFs {
 		}
 
 		if (time - lastCheckTime < checkTime) {
-			// System.out.println("get: " + path + "," + (time - lastCheckTime));
 			return it;
 		}
 		lastCheckTime = time;
-		// System.out.println("clear");
 		clearCacheByTime();
 
 		return it;
@@ -176,11 +163,6 @@ public final class AsarFs {
 	}
 
 	static AsarFileItem loadAsarFromPath(String path) {
-		// path = formatPath(path);
-		// if (mapFileItem.containsKey(path)) {
-		// 	return mapFileItem.get(path);
-		// }
-
 		File file = new File(path);
 		if (!file.exists() || file.isDirectory()) {
 			return null;
@@ -204,29 +186,9 @@ public final class AsarFs {
 		it.physicsMtimeMs = file.lastModified();
 		
 		return it;
-
-		// AsarCtl ctl = new AsarCtl();
-		// ctl.load(asarFile);
-		// if (!ctl.isAsarExist()) {
-		// 	return null;
-		// }
-
-		// AsarFileItem it = new AsarFileItem();
-		// it.ctl = ctl;
-		// //it.asarObj = ctl.getAsarObj();
-		// it.path = path;
-		// it.physicsPath = path;
-		// it.physicsStart = 0;
-		// it.physicsLen = file.length();
-		// it.physicsMtimeMs = file.lastModified();
-		// it.visitTime = new Date().getTime();
-		// mapFileItem.put(it.path, it);
-
-		// return it;
 	}
 
 	static AsarFileItem loadAsarFromVirtual(String path) {
-		// path = formatPath(path);
 		if (!mapVirtualAsarFile.containsKey(path)) {
 			return null;
 		}
@@ -234,29 +196,9 @@ public final class AsarFs {
 
 		AsarFileItem it = loadAsarFromAsarFileMd(asarFile, path);
 		return it;
-
-		// AsarCtl ctl = new AsarCtl();
-		// ctl.load(asarFile);
-		// if (!ctl.isAsarExist()) {
-		// 	return null;
-		// }
-
-		// AsarFileItem it = new AsarFileItem();
-		// it.ctl = ctl;
-		// //it.asarObj = ctl.getAsarObj();
-		// it.path = path;
-		// it.physicsPath = "";
-		// it.physicsStart = 0;
-		// it.physicsLen = 0;
-		// it.physicsMtimeMs = 0;
-		// it.visitTime = new Date().getTime();
-		// mapFileItem.put(it.path, it);
-
-		// return it;
 	}
 
 	static AsarFileItem loadAsarFromAsar(AsarFileItem asarItem, String subPath) {
-		// subPath = formatPath(subPath).replaceAll("^[\\\\/]+", "");
 		String[] arr = subPath.split("/");
 
 		if (!asarItem.ctl.isFileExist(subPath)) {
@@ -280,31 +222,6 @@ public final class AsarFs {
 		it.physicsMtimeMs = asarItem.physicsMtimeMs;
 		
 		return it;
-
-		// AsarCtl ctl = new AsarCtl();
-		// ctl.load(asarFile);
-		// if (!ctl.isAsarExist()) {
-		// 	return null;
-		// }
-
-		// AsarCtl ctl = new AsarCtl();
-		// ctl.load(asarFile);
-		// if (!ctl.isAsarExist()) {
-		// 	return null;
-		// }
-
-		// AsarFileItem it = new AsarFileItem();
-		// it.ctl = ctl;
-		// //it.asarObj = ctl.getAsarObj();
-		// it.path = asarItem.path + "/" + subPath;
-		// it.physicsPath = asarItem.physicsPath;
-		// it.physicsStart = 0;
-		// it.physicsLen = asarItem.physicsLen;
-		// it.physicsMtimeMs = asarItem.physicsMtimeMs;
-		// it.visitTime = new Date().getTime();
-		// mapFileItem.put(it.path, it);
-
-		// return it;
 	}
 
 	static boolean isAsarFile(String path) {
@@ -320,40 +237,6 @@ public final class AsarFs {
 		path += subPath;
 		return path;
 	}
-
-	//static AsarFileStatus getAsarFileStatus(JSONObject asarObj) {
-	//	AsarFileStatus st = new AsarFileStatus();
-	//}
-
-	//static AsarFileStatus isDirAsarFile(JSONObject asarDirObj, String subPath) {
-	//	String[] arr = formatPath(subPath).split("/", -1);
-	//
-	//	JSONObject objTmp = asarDirObj;
-	//	for (int i = 0; i < arr.length; ++i) {
-	//		String str = arr[i];
-	//		objTmp.has(str);
-	//	}
-	//	AsarFileStatus st = new AsarFileStatus();
-	//}
-	//
-	//static AsarFileStatus findAsarFile(JSONObject asarDirObj, String subPath) {
-	//	String[] arr = formatPath(subPath).split("/", -1);
-	//
-	//	JSONObject objTmp = asarDirObj;
-	//	for (int i = 0; i < arr.length; ++i) {
-	//		String str = arr[i];
-	//		objTmp.has(str);
-	//	}
-	//	AsarFileStatus st = new AsarFileStatus();
-	//}
-	
-	// static String jonArr(String[] arr) {
-	// 	return jonArr(arr, "", 0, -1);
-	// }
-	
-	// static String jonArr(String[] arr, String separator) {
-	// 	return jonArr(arr, separator, 0, -1);
-	// }
 	
 	static String jonArr(String[] arr, String separator, int start) {
 		return jonArr(arr, separator, start, -1);
@@ -373,10 +256,13 @@ public final class AsarFs {
 		}
 		return sb.toString();
 	}
+	
+	public static AsarFileInfo getAsarFileInfo(String path) {
+		return getAsarFileInfo(path, false);
+	}
 
-	static AsarFileInfo getAsarFileInfo(String path) {
+	public static AsarFileInfo getAsarFileInfo(String path, boolean isKeepLastAsarFile) {
 		path = formatPath(path);
-		//String[] arr = path.split("\\.asar/", -1);
 		String[] arr = path.split("/", -1);
 		if (arr.length <= 0) {
 			return null;
@@ -404,11 +290,6 @@ public final class AsarFs {
 				asarStartIdx = i + 1;
 				break;
 			}
-			// if (mapFileItem.containsKey(fullPath)) {
-			// 	asarTmp = mapFileItem.get(fullPath);
-			// 	asarStartIdx = i + 1;
-			// 	break;
-			// }
 
 			File file = new File(physicsPath);
 			if (!file.exists()) {
@@ -424,7 +305,6 @@ public final class AsarFs {
 			}
 			asarTmp = loadAsarFromPath(physicsPath);
 			if (asarTmp != null) {
-				//asarObj = asarTmp.asarObj;
 				asarStartIdx = i + 1;
 				break;
 			}
@@ -461,10 +341,6 @@ public final class AsarFs {
 				if (subPath.equals("")) {
 					break;
 				}
-				// System.out.println(linkPath);
-				// System.out.println(subPath);
-				// System.out.println(asarTmp.path);
-				// System.out.println("---");
 				arr = subPath.split("/", -1);
 				i = -1;
 				fullPath = asarTmp.path;
@@ -479,17 +355,14 @@ public final class AsarFs {
 			
 			AsarFileItem tmp = getFromCache(fullPath);
 			if (tmp != null) {
+				if (isKeepLastAsarFile && i == (arr.length - 1)) {
+					break;
+				}
 				asarTmp = tmp;
 				asarSubPath = "";
 				lastAsarStartIdx = i + 1;
 				continue;
 			}
-			// if (mapFileItem.containsKey(fullPath)) {
-			// 	asarTmp = mapFileItem.get(fullPath);
-			// 	asarSubPath = "";
-			// 	lastAsarStartIdx = i + 1;
-			// 	continue;
-			// }
 			String type = asarTmp.ctl.fileType(asarSubPath);
 			if (type.equals("dir")) {
 				continue;
@@ -497,32 +370,15 @@ public final class AsarFs {
 			if (!type.equals("file")) {
 				return null;
 			}
+			if (isKeepLastAsarFile && i == (arr.length - 1)) {
+				break;
+			}
 			asarTmp = loadAsarFromAsar(asarTmp, asarSubPath);
 			if (asarTmp == null) {
 				return null;
 			}
 			asarSubPath = "";
 			lastAsarStartIdx = i + 1;
-			//if (!asarObj.has("files")) {
-			//	return null;
-			//}
-			//JSONObject dirCont = asarObj.getJSONObject("files");
-			//if (!dirCont.has(str)) {
-			//	return null;
-			//}
-			//JSONObject child = dirCont.getJSONObject(str);
-			//if (child.has("file")) {
-			//	asarObj = child;
-			//	continue;
-			//}
-			//if (!isAsarFile(str)) {
-			//	return null;
-			//}
-			//if (i != arr.length - 1) {
-			//	return null;
-			//} else {
-			//
-			//}
 		}
 
 		if (asarTmp == null){
@@ -543,11 +399,6 @@ public final class AsarFs {
 		}
 
 		asarSubPath = jonArr(arr, "/", lastAsarStartIdx);
-		// for (int i = lastAsarStartIdx; i < arr.length; ++i) {
-		// 	String str = arr[i];
-		// 	//fullPath = addPath(fullPath, str);
-		// 	asarSubPath = addPath(asarSubPath, str);
-		// }
 
 		String type = asarTmp.ctl.fileType(asarSubPath);
 		status.isDirectory = type.equals("dir");
@@ -564,67 +415,6 @@ public final class AsarFs {
 
 		info.subPath = asarSubPath;
 		return info;
-
-		//for (int i = 0; i < arr.length - 1; ++i) {
-		//	String str = arr[i];
-		//	fullPath = addPath(fullPath, str);
-		//	//if (!fullPath.equals("")) {
-		//	//	fullPath += "/";
-		//	//}
-		//	//fullPath += str;
-		//	if (asarTmp == null) {
-		//		physicsPath = addPath(physicsPath, str);
-		//		//if (!physicsPathTmp.equals("")) {
-		//		//	physicsPathTmp += "/";
-		//		//}
-		//		//physicsPathTmp += str;
-		//	} else {
-		//		asarSubPath = addPath(asarSubPath, str);
-		//		//if (!asarSubPath.equals("")) {
-		//		//	asarSubPath += "/";
-		//		//}
-		//		//asarSubPath += str;
-		//	}
-		//	if (asarObj == null && !isAsarFile(str)) {
-		//		continue;
-		//	}
-		//	//if (i != arr.length -1) {
-		//	//	pathTmp += ".asar/";
-		//	//}
-		//	if (mapFileItem.containsKey(physicsPath)) {
-		//		asarTmp = mapFileItem.get(physicsPath);
-		//		if (asarTmp != null) {
-		//			asarObj = asarTmp.asarObj;
-		//		}
-		//	}
-		//	if (asarObj == null) {
-		//		File file = new File(physicsPath);
-		//		if (!file.exists()) {
-		//			return null;
-		//		}
-		//		if (file.isDirectory()) {
-		//			continue;
-		//		}
-		//		asarTmp = loadAsarFromPath(physicsPath);
-		//		if (asarTmp != null) {
-		//			asarObj = asarTmp.asarObj;
-		//		}
-		//	}
-		//	if (asarObj == null) {
-		//		return null;
-		//	}
-		//	//if (i != arr.length -1) {
-		//	//	asarSubPath += ".asar/";
-		//	//}
-		//	if (mapFileItem.containsKey(fullPath)) {
-		//		asarTmp = mapFileItem.get(fullPath);
-		//		continue;
-		//	}
-		//	if (asarObj.has(str)) {
-		//
-		//	}
-		//	asarSubPath += arr[i] + "/";
-		//}
 	}
 	
 	/**
@@ -646,13 +436,6 @@ public final class AsarFs {
 			AsarFile value = ent.getValue();
 			mapVirtualAsarFile.put(key, value);
 		}
-
-		// for (Entry<String, AsarFile> ent: virtualAsarFile.entrySet()) {
-		// 	String key = formatPath(ent.getKey());
-		// 	AsarFile value = ent.getValue();
-		// 	mapVirtualAsarFile.put(key, value);
-		// }
-		// this.mapVirtualAsarFile = mapVirtualAsarFile;
 	}
 
 	/**
@@ -710,23 +493,6 @@ public final class AsarFs {
 		}
 		status.isSymbolicLink = false;
 		return status;
-
-		// File file = new File(path);
-		// if (file.exists()) {
-		// 	AsarFileStatus status = new AsarFileStatus();
-		// 	status.isFile = file.isFile();
-		// 	status.isDirectory = file.isDirectory();
-		// 	status.size = status.isFile ? file.length() : 0;
-		// 	status.mtimeMs = file.lastModified();
-		// 	status.atimeMs = status.ctimeMs = status.mtimeMs;
-		// 	return status;
-		// }
-		// AsarFileInfo info = getAsarFileInfo(path);
-		// if (info == null) {
-		// 	return null;
-		// }
-		// info.subFileStatus.isSymbolicLink = false;
-		// return info.subFileStatus;
 	}
 
 	/**
@@ -788,20 +554,18 @@ public final class AsarFs {
 	*/
 	public static InputStream getFileStream(String path) {
 		path = formatPath(path);
-		if (!isAsarFile(path)) {
-			File file = new File(path);
-			if (file.exists()) {
-				if (file.isDirectory()) {
-					return null;
-				}
-				try {
-					return new FileInputStream(path);
-				} catch (Exception ignored) {
-					return null;
-				}
+		File file = new File(path);
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				return null;
+			}
+			try {
+				return new FileInputStream(path);
+			} catch (Exception ignored) {
+				return null;
 			}
 		}
-		AsarFileInfo info = getAsarFileInfo(path);
+		AsarFileInfo info = getAsarFileInfo(path, true);
 		if (info == null) {
 			return null;
 		}
