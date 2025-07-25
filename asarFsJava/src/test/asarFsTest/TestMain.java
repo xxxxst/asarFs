@@ -4,15 +4,12 @@ import com.google.gson.Gson;
 import com.vcedit.asarFs.AsarFile;
 import com.vcedit.asarFs.AsarFileStatus;
 import com.vcedit.asarFs.AsarFs;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TestMain {
@@ -63,8 +60,13 @@ public class TestMain {
 		// 	return;
 		// }
 
+		// testSpeed();
+
+		// if (true) {
+		// 	return;
+		// }
+
         log("test start");
-		System.out.println("");
 
 		formatPathTest("", "");
 		formatPathTest("/", "/");
@@ -143,7 +145,7 @@ public class TestMain {
 		lstatSyncTest(null, "@resource/test/appVirtual.asar/cccLink/dddLink\\\\//gggLink.txt");
 		
 		readdirSyncTest(new String[0], "");
-		readdirSyncTest(readdirSync("./test/"), "./test/");
+		readdirSyncTest(TestHelp.readdirSync("./test/"), "./test/");
 		readdirSyncTest(new String[0], "./test/unknown.txt");
 		readdirSyncTest(new String[] { "Aaa", "AaaLink", "bbb.asar", "ccc", "cccLink", "files", "bbb.txt", "bbbLink.txt", "ccc.asar" }, "./test/app.asar");
 		readdirSyncTest(new String[0], "./test/app.asar/\\bbb.txt");
@@ -230,7 +232,78 @@ public class TestMain {
 		readFileStringSyncTest("ggggggg", "@resource/test/appVirtual.asar/cccLink/dddLink\\\\//gggLink.txt");
 
         log("test count: ", testCount, ", success: ", (testCount - errCount), ", failed: ", errCount);
+		
+		testSpeed();
+		
         log("test end");
+	}
+
+	static void testSpeed() {
+		try {
+			String rootPath = "./test/data";
+			String txtFilePath = rootPath + "/filePath.txt";
+			String asarRootDir = rootPath + "/web.asar";
+			String fileRootDir = rootPath + "/web";
+			if (!TestHelp.isFileExist(txtFilePath)) {
+				return;
+			}
+			if (!TestHelp.isFileExist(asarRootDir)) {
+				return;
+			}
+			if (!TestHelp.isDirExist(fileRootDir)) {
+				return;
+			}
+
+			String strText = TestHelp.readFileString(new FileInputStream(new File(txtFilePath)));
+			String[] arrText = strText.replaceAll("\\r", "").split("\n");
+
+			// log("press enter to continue");
+			// readConsoleChar();
+			log("");
+			log("test speed start!");
+
+			long time1 = System.currentTimeMillis();
+
+			// float limitPre = 1f;
+			// int startIdx = 66;
+			// int count = 67;
+			// int startIdx = 0;
+			// int count = arrText.length;
+
+			for (int i = 0; i < arrText.length; ++i) {
+				String fullPath = asarRootDir + "/" + arrText[i];
+				AsarFs.readFileByteSync(fullPath);
+				// InputStream is = AsarFs.getFileStream(fullPath);
+				// arrData1 = TestHelp.readFileByte(is);
+				// AsarFs.getAsarFileInfo(fullPath);
+				// if (i > arrText.length * limitPre) {
+				// 	break;
+				// }
+				// break;
+			}
+			long time2 = System.currentTimeMillis();
+			
+			for (int i = 0; i < arrText.length; ++i) {
+				String fullPath = fileRootDir + "/" + arrText[i];
+				AsarFs.readFileByteSync(fullPath);
+				// InputStream is = AsarFs.getFileStream(fullPath);
+				// arrData2 = TestHelp.readFileByte(is);
+				// if (i > arrText.length * limitPre) {
+				// 	break;
+				// }
+				// break;
+			}
+			long time3 = System.currentTimeMillis();
+
+			log("asar load time: ", (time2 - time1));
+			log("file load time: ", (time3 - time2));
+			log("");
+
+			// log("press enter to exit");
+			// readConsoleChar();
+		} catch(Exception ignored) {
+			log(ignored.toString());
+		}
 	}
 
 	static class StatusCompare extends ObjCompare<AsarFileStatus> {
@@ -273,23 +346,6 @@ public class TestMain {
 
 	static AsarFileStatus stLink() {
 		return createStatus(false, false, true, 0, asarMtime);
-	}
-
-	static String[] readdirSync(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			return new String[0];
-		}
-		if (!file.isDirectory()) {
-			return new String[0];
-		}
-		List<String> lstName = new ArrayList<>();
-		for (File it : file.listFiles()) {
-			lstName.add(it.getName());
-		}
-		String[] rst = new String[lstName.size()];
-		lstName.toArray(rst);
-		return rst;
 	}
 
 	static AsarFileStatus createStatus(boolean isFile, boolean isDirectory, boolean isSymbolicLink, long size, float time) {
@@ -372,20 +428,10 @@ public class TestMain {
 	}
 
 	static void log(Object ...arrObj) {
-		String str = "";
-		for (int i = 0; i < arrObj.length; ++i) {
-			str += arrObj[i];
-		}
-		System.out.println(str);
+		TestHelp.log(arrObj);
 	}
 
 	static void logObj(Object ...arrObj) {
-		for (int i = 0; i < arrObj.length; ++i) {
-			String str = gson.toJson(arrObj[i]);
-			if (str.equals("\"\"")) {
-				str = "";
-			}
-			System.out.println(str);
-		}
+		TestHelp.logObj(arrObj);
 	}
 }

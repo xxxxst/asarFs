@@ -1,6 +1,6 @@
 package com.vcedit.asarFs;
 
-import org.json.JSONObject;
+// import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-public final class AsarFs {
+public class AsarFs {
 	/** asar header cache time(ms), default is 30 minutes */
 	public static long cacheTimeMs = 30 * 60 * 1000;
 
@@ -114,7 +114,7 @@ public final class AsarFs {
 		Iterator<Entry<String, AsarFileItem>> itr = mapFileItem.entrySet().iterator();
 		while (itr.hasNext()) {
 			Entry<String, AsarFileItem> ent = itr.next();
-			String path = ent.getKey();
+			// String path = ent.getKey();
 			AsarFileItem it = ent.getValue();
 			
 			if (time - it.visitTime > cacheTimeMs) {
@@ -199,7 +199,7 @@ public final class AsarFs {
 	}
 
 	static AsarFileItem loadAsarFromAsar(AsarFileItem asarItem, String subPath) {
-		String[] arr = subPath.split("/");
+		// String[] arr = subPath.split("/");
 
 		if (!asarItem.ctl.isFileExist(subPath)) {
 			return null;
@@ -261,7 +261,7 @@ public final class AsarFs {
 		return getAsarFileInfo(path, false);
 	}
 
-	public static AsarFileInfo getAsarFileInfo(String path, boolean isKeepLastAsarFile) {
+	static AsarFileInfo getAsarFileInfo(String path, boolean isKeepLastAsarFile) {
 		path = formatPath(path);
 		String[] arr = path.split("/", -1);
 		if (arr.length <= 0) {
@@ -272,7 +272,7 @@ public final class AsarFs {
 		String physicsPath = "";
 		String asarSubPath = "";
 		AsarFileItem asarTmp = null;
-		JSONObject asarObj = null;
+		// JSONObject asarObj = null;
 
 		int asarStartIdx = -1;
 
@@ -381,9 +381,9 @@ public final class AsarFs {
 			lastAsarStartIdx = i + 1;
 		}
 
-		if (asarTmp == null){
-			return null;
-		}
+		// if (asarTmp == null){
+		// 	return null;
+		// }
 
 		AsarFileStatus status = new AsarFileStatus();
 		AsarFileInfo info = new AsarFileInfo();

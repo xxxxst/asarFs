@@ -2,7 +2,7 @@
 
 set rootDir=%~dp0
 
-set version=0.0.2
+set version=0.0.3
 set encoding=utf8
 set locale=en_US
 

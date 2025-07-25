@@ -6,7 +6,7 @@ if not "%1" == "test" (
 	call %rootDir%\build.bat
 )
 
-set version=0.0.1
+set version=0.0.3
 set mainClass=asarFsTest.TestMain
 set encoding=utf8
 
@@ -27,4 +27,4 @@ if not exist "%tagDir%" (
 )
 
 javac -encoding "%encoding%" -d "%tagDir%" -sourcepath "%srcDir%" -cp "%lib%" ""%src%""
-java -cp "%lib%" "%mainClass%"
+java -cp "%lib%" "%mainClass%" -XX:+UnlockCommercialFeatures -XX:+FlightRecorder
